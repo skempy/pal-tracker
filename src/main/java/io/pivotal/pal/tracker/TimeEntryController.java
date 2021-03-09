@@ -1,10 +1,7 @@
 package io.pivotal.pal.tracker;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.websocket.server.PathParam;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.*;
@@ -27,11 +24,8 @@ public class TimeEntryController {
 
     @GetMapping("/time-entries/{timeEntryId}")
     public ResponseEntity<TimeEntry> read(@PathVariable long timeEntryId) {
-        TimeEntry foundTimeEntry = timeEntryRepository.find(timeEntryId);
-        if (foundTimeEntry == null) {
-            return status(NOT_FOUND).build();
-        }
-        return status(OK).body(foundTimeEntry);
+        TimeEntry timeEntry = timeEntryRepository.find(timeEntryId);
+        return handleWhenThereIsNo(timeEntry);
     }
 
     @GetMapping("/time-entries")
@@ -42,16 +36,20 @@ public class TimeEntryController {
 
     @PutMapping("/time-entries/{timeEntryId}")
     public ResponseEntity<TimeEntry> update(@PathVariable long timeEntryId, @RequestBody TimeEntry timeEntryToUpdate) {
-        TimeEntry foundTimeEntry = timeEntryRepository.update(timeEntryId, timeEntryToUpdate);
-        if (foundTimeEntry == null) {
-            return status(NOT_FOUND).build();
-        }
-        return status(OK).body(foundTimeEntry);
+        TimeEntry timeEntry = timeEntryRepository.update(timeEntryId, timeEntryToUpdate);
+        return handleWhenThereIsNo(timeEntry);
     }
 
     @DeleteMapping("/time-entries/{timeEntryId}")
     public ResponseEntity<Void> delete(@PathVariable long timeEntryId) {
         timeEntryRepository.delete(timeEntryId);
         return status(NO_CONTENT).build();
+    }
+
+    private ResponseEntity<TimeEntry> handleWhenThereIsNo(TimeEntry timeEntry) {
+        if (timeEntry == null) {
+            return status(NOT_FOUND).build();
+        }
+        return status(OK).body(timeEntry);
     }
 }
