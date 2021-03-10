@@ -10,7 +10,7 @@ applications:
   health-check-type: port
   timeout: 60
   routes:
-  - route: pal-tracker-${UNIQUE_IDENTIFIER}.${DOMAIN}
+  - route: pal-tracker-scott-kemp.apps.evans.pal.pivotal.io
   services:
   - tracker-database
   env:
